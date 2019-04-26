@@ -5,9 +5,9 @@ import './movies.scss';
 
 let movies = [];
 
-const domStringBuilder = () => {
+const domStringBuilder = (movieArray) => {
   let domString = '';
-  movies.forEach((movie) => {
+  movieArray.forEach((movie) => {
     domString += `<div id=${movie.id} class="card movie col-3">`;
     domString += `<div class="card-header">${movie.name}</div>`;
     domString += '<div class="card-body">';
@@ -21,12 +21,25 @@ const domStringBuilder = () => {
   util.printToDom('movies', domString);
 };
 
+// the indexFromId gets the slot in the
+// clicked movies array and proved what position its in sub-(slot number)
+const filterMovies = () => {
+  const movieCards = Array.from(document.getElementsByClassName('movie'));
+  movieCards.forEach((movieCard) => {
+    movieCard.addEventListener('click', () => {
+      const indexOfClickedMovie = util.indexFromId(movies, movieCard.id);
+      domStringBuilder([movies[indexOfClickedMovie]]);
+    });
+  });
+};
+
 const initializeMovies = () => {
   moviesData.getMoviesData()
     .then((resp) => {
       const movieResults = resp.data.movies;
       movies = movieResults;
-      domStringBuilder();
+      domStringBuilder(movies);
+      filterMovies();
     })
     .catch(err => console.error(err));
 };
